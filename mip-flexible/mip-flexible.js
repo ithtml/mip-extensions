@@ -6,17 +6,18 @@
 define(function (require) {
 
   var customElement = require('customElement').create();
-
+  
   /**
    * 构造元素，只会运行一次
    */
   customElement.prototype.build = function () {
     // TODO
-    var util = require('util');
-    var platform = util.platform;
-
-    var isIos = platform.isIos();
+  var util = require('util');
+  var platform = util.platform;
     
+
+    
+
     ; (function (win, lib) {
       var doc = win.document;
       var docEl = doc.documentElement;
@@ -27,34 +28,37 @@ define(function (require) {
       var tid;
       var flexible = lib.flexible || (lib.flexible = {});
 
-      if (metaEl) {
-        console.warn('将根据已有的meta标签来设置缩放比例');
-        var match = metaEl.getAttribute('content').match(/initial\-scale=([\d\.]+)/);
-        if (match) {
-          scale = parseFloat(match[1]);
-          dpr = parseInt(1 / scale);
-        }
-      } else if (flexibleEl) {
-        var content = flexibleEl.getAttribute('content');
-        if (content) {
-          var initialDpr = content.match(/initial\-dpr=([\d\.]+)/);
-          var maximumDpr = content.match(/maximum\-dpr=([\d\.]+)/);
-          if (initialDpr) {
-            dpr = parseFloat(initialDpr[1]);
-            scale = parseFloat((1 / dpr).toFixed(2));
-          }
-          if (maximumDpr) {
-            dpr = parseFloat(maximumDpr[1]);
-            scale = parseFloat((1 / dpr).toFixed(2));
-          }
-        }
-      }
+      // if (metaEl) {
+      //   console.warn('将根据已有的meta标签来设置缩放比例');
+      //   var match = metaEl.getAttribute('content').match(/initial\-scale=([\d\.]+)/);
+      //   if (match) {
+      //     scale = parseFloat(match[1]);
+      //     dpr = parseInt(1 / scale);
+      //   }
+      // } else if (flexibleEl) {
+      //   var content = flexibleEl.getAttribute('content');
+      //   if (content) {
+      //     var initialDpr = content.match(/initial\-dpr=([\d\.]+)/);
+      //     var maximumDpr = content.match(/maximum\-dpr=([\d\.]+)/);
+      //     if (initialDpr) {
+      //       dpr = parseFloat(initialDpr[1]);
+      //       scale = parseFloat((1 / dpr).toFixed(2));
+      //     }
+      //     if (maximumDpr) {
+      //       dpr = parseFloat(maximumDpr[1]);
+      //       scale = parseFloat((1 / dpr).toFixed(2));
+      //     }
+      //   }
+      // }
 
       if (!dpr && !scale) {
-        var isAndroid = win.navigator.appVersion.match(/android/gi);
-        var isIPhone = win.navigator.appVersion.match(/iphone/gi);
+        console.log('zoule');
+        // var isAndroid = win.navigator.appVersion.match(/android/gi);
+        var isAndroid = platform.isAndroid();
+        // var isIPhone = win.navigator.appVersion.match(/iphone/gi);
+        var isIos = platform.isIos();
         var devicePixelRatio = win.devicePixelRatio;
-        if (isIPhone) {
+        if (isIos) {
           // iOS下，对于2和3的屏，用2倍的方案，其余的用1倍方案
           if (devicePixelRatio >= 3 && (!dpr || dpr >= 3)) {
             dpr = 3;
@@ -69,9 +73,10 @@ define(function (require) {
         }
         scale = 1 / dpr;
       }
-
+      console.log('zoule2');
       docEl.setAttribute('data-dpr', dpr);
       if (!metaEl) {
+        console.log('zoule');
         metaEl = doc.createElement('meta');
         metaEl.setAttribute('name', 'viewport');
         metaEl.setAttribute('content', 'initial-scale=' + scale + ', maximum-scale=' + scale + ', minimum-scale=' + scale + ', user-scalable=no');
